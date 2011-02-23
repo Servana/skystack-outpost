@@ -1,0 +1,80 @@
+#!/bin/bash
+SKYSTACK_HOME=/opt/skystack/
+
+OUT_PID=$SKYSTACK_HOME/run/outpost.pid
+EPM_PID=$SKYSTACK_HOME/run/epmd.pid
+
+start() {
+  if [ ! -e $OUT_PID ]; then
+	echo "starting: Skystack Outpost"
+    exec $SKYSTACK_HOME/outpost/latest/start.sh 
+  fi
+}
+
+add_pids() {
+	echo -e `pidof beam` > $OUT_PID
+	echo -e `pidof epmd` > $EPM_PID
+	echo "Skystack Outpost running with pid `pidof beam`"
+}
+
+stop() {
+	OPID=`cat $OUT_PID`
+ 	echo "stopping: Skystack Outpost with pid `cat $OUT_PID`"
+  if [ -e $OUT_PID ]; then
+	kill -9 $OPID 
+	rm $OUT_PID
+  fi
+}
+
+stop_all() {
+	OPID=`cat $OUT_PID`
+	EPID=`cat $EPM_PID`
+ 	echo "stopping: Skystack Outpost and EPMD with pids `cat $W_PID` ,`cat $E_PID`"
+  if [ -e $OUT_PID ]; then
+	kill -9 $OPID 
+	rm $OUT_PID
+  fi
+  if [ -e $EPM_PID ]; then
+	kill -9 $EPID
+	rm $EPM_PID
+  fi
+}
+
+
+restart() {
+  stop
+  start
+}
+
+status() {
+ if [ -e $OUT_PID ]; then
+	echo "Skystack Outpost is running with pid `cat $OUT_PID`"
+else
+	echo "Skystack Outpost has not been started. /etc/init.d/outpost start"
+  fi
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+	add_pids
+    ;;
+  stop)
+    stop
+    ;;
+  stop_all)
+    stop_all
+    ;;
+  restart)
+    restart
+    ;;
+  status)
+    status
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|stop_all|restart|status}"
+    exit 1
+esac
+
+exit 0
