@@ -42,7 +42,7 @@ init([]) ->
 			Pass = get_opts(password),
 			User = get_opts(username),
 
-	ConnectInfo = {network,"localhost",5671,{User, Pass},list_to_binary(Vhost),
+	ConnectInfo = {network,"my.skystack.com",5671,{User, Pass},list_to_binary(Vhost),
 					[{cacertfile, get_opts(cacert)},
 					 {certfile, get_opts(cert)},
 					 {keyfile, get_opts(key)},
